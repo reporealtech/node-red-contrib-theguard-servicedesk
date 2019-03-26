@@ -1,0 +1,59 @@
+<script type="text/javascript">
+    RED.nodes.registerType('sd-config',{
+        category: 'config',
+        defaults: {
+		    url: {
+				value: "http://172.24.1.105/ServiceCenter/",
+				required: true
+			  }
+			,  user: {
+				value: "",
+				required: true
+			  }
+        },
+		credentials: {
+		  password: {
+			type:"password",
+			required: true
+		  }
+		},
+        label: function() {
+			 return `user: ${this.user}` //
+        },
+        exportable: false,
+        oneditsave: function() {
+			$.each( $("input[id^='node-config-input-']"), function () {
+			  let v=$(this).val().trim();
+			  $(this).val(v)
+			});
+        }
+    });
+</script>
+
+<script type="text/x-red" data-template-name="sd-config">
+	
+  <h4>REALTECH theGuard! ServiceDesk</h4>
+  <hr>
+  <div class="form-row">
+    <label for="node-config-input-url"><i class="icon-globe"></i> URL</label>
+    <input type="text" id="node-config-input-url" placeholder="http://www.musterfirma.de/ServiceCenter/">
+  </div>
+  
+	  <hr>
+  <h5>Credentials</h5>
+  <hr>
+  
+  <div class="form-row">
+    <label for="node-config-input-user"><i class="icon-tag"></i> user</label>
+    <input type="text" id="node-config-input-user" placeholder="Musterfirma">
+  </div>
+  <div class="form-row">
+    <label for="node-config-input-password"><i class="fa fa-key"></i> password</label>
+    <input type="password" id="node-config-input-password">
+  </div>
+
+</script>
+
+<script type="text/x-red" data-help-name="sd-config">
+    <p>Configuration for REALTECH theGuard! ServiceDesk</p>
+</script>

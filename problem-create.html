@@ -1,0 +1,35 @@
+<script type="text/javascript">
+    RED.nodes.registerType('problem-create',{
+        category: 'REALTECH Dot4',
+        color: '#bdc7e7',
+        defaults: {
+             sdconfig: {value:"", type:"sd-config"}
+        },
+        inputs:1,
+        outputs:1,
+        icon: "sd_logo.png",
+        label: function() {
+            return this.name||"problem-create";
+        }
+    });
+</script>
+
+<script type="text/x-red" data-template-name="problem-create">
+    <div class="form-row">
+        <label for="node-input-name"><i class="icon-tag"></i> Name</label>
+        <input type="text" id="node-input-name" placeholder="Name">
+    </div>
+	
+	<hr>
+  <h4>sd</h4>
+  <hr>
+  <div class="form-row">
+    <label for="node-input-sdconfig"><i class="icon-bookmark"></i> Access Data</label>
+    <input type="text" id="node-input-sdconfig" >
+  </div>
+
+</script>
+
+<script type="text/x-red" data-help-name="problem-create">
+    <p>start a problem in REALTECH theGuard! ServiceDesk</p>
+</script>
