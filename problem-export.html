@@ -1,0 +1,36 @@
+<script type="text/javascript">
+    RED.nodes.registerType('problem-export',{
+        category: 'REALTECH Dot4',
+        color: '#bdc7e7',
+        defaults: {
+             sdconfig: {value:"", type:"sd-config"}
+        },
+        inputs:1,
+        outputs:1,
+        icon: "sd_logo.png",
+        label: function() {
+            return this.name||"problem-export";
+        }
+    });
+</script>
+
+<script type="text/x-red" data-template-name="problem-export">
+    <div class="form-row">
+        <label for="node-input-name"><i class="icon-tag"></i> Name</label>
+        <input type="text" id="node-input-name" placeholder="Name">
+    </div>
+	
+	<hr>
+  <h4>REALTECH .4</h4>
+  <hr>
+  <div class="form-row">
+    <label for="node-input-sdconfig"><i class="icon-bookmark"></i> Access Data</label>
+    <input type="text" id="node-input-sdconfig" >
+  </div>
+  
+
+</script>
+
+<script type="text/x-red" data-help-name="problem-export">
+    <p>export a tickets from REALTECH .4</p>
+</script>

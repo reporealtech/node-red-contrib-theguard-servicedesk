@@ -1,5 +1,5 @@
 <script type="text/javascript">
-    RED.nodes.registerType('problem-create',{
+    RED.nodes.registerType('problem-upsert',{
         category: 'REALTECH Dot4',
         color: '#bdc7e7',
         defaults: {
@@ -9,12 +9,12 @@
         outputs:1,
         icon: "sd_logo.png",
         label: function() {
-            return this.name||"problem-create";
+            return this.name||"problem-upsert";
         }
     });
 </script>
 
-<script type="text/x-red" data-template-name="problem-create">
+<script type="text/x-red" data-template-name="problem-upsert">
     <div class="form-row">
         <label for="node-input-name"><i class="icon-tag"></i> Name</label>
         <input type="text" id="node-input-name" placeholder="Name">
@@ -30,6 +30,6 @@
 
 </script>
 
-<script type="text/x-red" data-help-name="problem-create">
-    <p>start a problem in REALTECH theGuard! ServiceDesk</p>
+<script type="text/x-red" data-help-name="problem-upsert">
+    <p>start/update a problem in REALTECH theGuard! ServiceDesk</p>
 </script>
