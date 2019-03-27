@@ -8,11 +8,12 @@ const _=require("lodash")
 ;
 
 module.exports = class ServiceDeskClient {
-	constructor(baseUrl, user, password){
+	constructor(baseUrl, user, password, feedbackFunction){
 		debug("creating ServiceDeskClient")
 		this.baseUrl=baseUrl
 		this.user=user
 		this.password=password
+		this.feedbackFunction=feedbackFunction
 		//this.cookiejar = rp.jar();
 		
 		if(this.baseUrl.endsWith('/'))
@@ -37,39 +38,41 @@ module.exports = class ServiceDeskClient {
 	async loadProblemWithId(id){
 		let resp= await this.sdRequest({
 			uri: this.baseUrl+"ETM/ProblemManagement/pmtool.asp"
-				, method: 'POST'
-				, form: {
-					gaction: "searchProblemList"
+				, method: 'GET'
+				, qs: {
+					gaction: "showProblem"
 					, sys_pm_id: id
-					// , whocares: "Übermitteln"
+					// , whocares: "UUUUUUUUUUUUbermitteln"
 				}
 			})
 			
-		debug(`statusCode: ${resp.statusCode}`)
+		debug(`loaded details for Problem (ID: ${id}). statusCode: ${resp.statusCode}`)
 		
-		const $=cheerio.load(resp.body)
+		return this.fetchProblemInfoFromHtmlDetails(resp.body)
+	}
+	
+	fetchProblemInfoFromHtmlDetails(html){
+		const $=cheerio.load(html)
 		, loadedDetailsMapper={
-			TD0_0: "ID"
-			, TD0_1: "Startzeitpunkt"
-			, TD0_4: "Betreff"
-			, TD0_21: "Kategorie"
-			, TD0_15: 'Manager'
-			, TD0_17: 'Supportmitarbeiter'
-			, TD0_20: 'Status'
-			, TD0_18: 'Prioritaet'
-			, TD0_19: 'Auswirkung'
-			, TD0_24: 'Zieldatum'
-			
+			"formedit_2_2": "ID"
+			, "formedit_2_5": "Newsletter"
+			, "formedit_7_2": "Betreff"
+			, "formedit_6_2": "Kategorie"
+			, "formedit_9_2": 'Manager'
+			, "formedit_10_2": 'Supportmitarbeiter'
+			, "formedit_5_2": 'Status'
+			, "formedit_4_2": 'Prioritaet'
+			, "formedit_8_2": 'Beschreibung'
+			, "formedit_11_2": 'Zieldatum'
 		}
 		, loadedDetails={}
-		;
+		
 		_.forEach(loadedDetailsMapper, (v,k)=>{
-			loadedDetails[v]=striptags($("#"+k).html()).trim()
-			debug(`${v}: ${loadedDetails[v]}`)
+			loadedDetails[v]=striptags($(`#${k}`).html()).trim()
+			// debug(`Detailspage. ${v}: ${loadedDetails[v]}`)
 		})
-		
-		return /\d/.test(loadedDetails.ID) ? loadedDetails : null
-		
+		loadedDetails.sd_id=loadedDetails.ID
+		return loadedDetails
 	}
 	
 	async listProblems(){
@@ -89,7 +92,63 @@ module.exports = class ServiceDeskClient {
 				, lstSYS_ASSET_ProblemintListID: 100
 			}
 		})
-		debug(JSON.stringify(resp))
+		
+		const $=cheerio.load(resp.body)
+		, loadedDetailsMapper={
+			"0": "ID"
+			, "1": "Startzeitpunkt"
+			, "4": "Betreff"
+			, "21": "Kategorie"
+			, "15": 'Manager'
+			, "17": 'Supportmitarbeiter'
+			, "20": 'Status'
+			, "18": 'Prioritaet'
+			, "19": 'Auswirkung'
+			, "24": 'Zieldatum'
+			
+		}
+		, loadedDetails=[]
+		;
+		
+		let minRowOnPage=-1
+		, maxRowOnPage=-1
+		;
+		$("td[id^='TD']").each(function() {
+			if($(this).attr('id').match(/^TD([0-9]+)_[0-9]+/)){
+				let row=parseInt(RegExp.$1)
+				maxRowOnPage=Math.max(maxRowOnPage, row)
+				if(minRowOnPage==-1)
+					minRowOnPage=row
+				else
+					minRowOnPage=Math.min(minRowOnPage, row)
+			}
+		})
+	   
+		debug(`###### ANZAHL ZEILEN auf SD-PAge: ${maxRowOnPage}`)
+		
+		const rowIndices=_.range(minRowOnPage, maxRowOnPage+1)
+		let rowCnt=0
+		for(const row of rowIndices){
+			const rowdata={}
+			_.forEach(loadedDetailsMapper, (v,k)=>{
+				rowdata[v]=striptags($(`#TD${row}_${k}`).html()).trim()
+				// debug(`Listdata. ${v}: ${rowdata[v]}`)
+			})
+			rowdata.sd_id=rowdata.ID
+			
+			this.feedbackFunction(`downloading data (${++rowCnt}/${rowIndices.length+1})`);
+			const detailData=await this.loadProblemWithId(rowdata["ID"])
+			loadedDetails.push(_.merge(rowdata, detailData))
+		}
+		
+		//TODO: click/load next page if more problems available. IS THERE PAGINATION
+		
+		if( /\d/.test(loadedDetails[0].ID) ) {
+			return loadedDetails
+		}
+		
+		debug(`${this.constructor.name}.fetchProblemInfoFromHtmlList(): possible parsing problem`)
+		return null
 	}
 	
 	async upsertProblems(problemDataParam){
@@ -134,7 +193,7 @@ module.exports = class ServiceDeskClient {
 					// , sys_pm_targetdate_chkdate: 'Y'
 					// , sys_pm_targetdate_hour: 0
 					// , sys_pm_targetdate_minutes: 0
-					// , whocares: 'Hinzufügen'
+					// , whocares: 'Hinzufuuuuuuuuuuuuugen'
 					, sys_pm_id: problemReq.sd_id
 				}
 			})

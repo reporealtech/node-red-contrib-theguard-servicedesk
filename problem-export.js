@@ -20,10 +20,12 @@ module.exports = function(RED) {
 					node.log(`create sd Client. url: ${sdConfigNode.url}, user: ${sdConfigNode.user}`)
 					node.status({fill:"green",shape:"ring",text:"connecting"});
 					
-					const sdCli=new ServiceDeskClient(sdConfigNode.url, sdConfigNode.user, _.get(sdConfigNode,"credentials.password"), node);
+					const sdCli=new ServiceDeskClient(sdConfigNode.url, sdConfigNode.user, _.get(sdConfigNode,"credentials.password"), (feedback)=>{
+						node.status({fill:"blue",shape:"ring",text: feedback});
+					});
 					node.log("connected to sd")
 
-					node.status({fill:"blue",shape:"ring",text:"uploading problem data"});
+					node.status({fill:"blue",shape:"ring",text:"downloading data"});
 					msg.payload=await sdCli.listProblems()
 					
 					node.send(msg);
