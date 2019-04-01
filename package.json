@@ -14,7 +14,8 @@
   "node-red": {
     "nodes": {
       "problem-upsert": "problem-upsert.js",
-      "problem-export": "problem-export.js"
+      "problem-export": "problem-export.js",
+      "sd-config": "sd-config.js"
     }
   },
   "scripts": {
