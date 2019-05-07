@@ -1,6 +1,6 @@
 {
   "name": "node-red-contrib-theguard-servicedesk",
-  "version": "0.0.3",
+  "version": "0.0.4",
   "description": "create theguard servicedesk items",
   "main": "index.js",
   "devDependencies": {
