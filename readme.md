@@ -1,5 +1,5 @@
 ![Platform Node-RED](http://b.repl.ca/v1/Platform-Node--RED-red.png)
-![Node-RED theguard-servicedesk](http://b.repl.ca/v1/Node--RED-theguard-servicedesk-orange.png)
+![Node-RED theguard-servicedesk](http://b.repl.ca/v1/Node--RED-theguard--servicedesk-orange.png)
 [![NPM version](https://badge.fury.io/js/node-red-contrib-theguard-servicedesk.png)](https://www.npmjs.com/package/node-red-contrib-theguard-servicedesk)
 ![NodeJS_Version](http://b.repl.ca/v1/NodeJS-LTS-green.png)
 
