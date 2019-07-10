@@ -11,6 +11,8 @@
 
 ## Install
 
+This assumes you have [Node-RED](https://nodered.org) already installed and working, if you need to install Node-RED see [here](https://nodered.org/docs/getting-started/).
+
 Run the following command in the root directory of your Node-RED install
 
     npm install node-red-contrib-theguard-servicedesk
@@ -23,9 +25,19 @@ try these options on npm install to build, if you have problems to install
 
     --unsafe-perm --build-from-source
     
-## How to use
+## Included Nodes
+
+The installed nodes have more detailed information in the Node-RED info pane shown when the node is selected. Below is a quick summary.
+
+### Export Problems - `problem-export`
+
+Export all problem tickets from REALTECH theGuard! ServiceDesk.
 
 ![Flow Example](images/screenshot-ticket-export-1.png)
+
+### Manipulate Problems - `problem-upsert`
+
+Start/update a problem ticket in REALTECH theGuard! ServiceDesk.
 
 ## Debug
 
